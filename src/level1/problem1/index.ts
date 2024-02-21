@@ -10,8 +10,24 @@ export function serialize(value: Value): unknown {
   /**
    * insert your code here
    */
+    if (value === null || typeof value !== 'object') {
+      return value;
+    }
   
-  return;
+    if (Array.isArray(value)) {
+      return value.map(serialize);
+    }
+  
+    const serializedObject: { [key: string]: unknown } = {};
+  
+    for (const key in value) {
+      if (Object.prototype.hasOwnProperty.call(value, key)) {
+        serializedObject[key] = serialize(value[key]);
+      }
+    }
+  
+    return serializedObject;
+  
 }
 
 /**
@@ -22,6 +38,22 @@ export function deserialize<T = unknown>(value: unknown): T {
   /**
    * insert your code here
    */
+  if (value === null || typeof value !== 'object') {
+    return value as T;
+  }
+
+  if (Array.isArray(value)) {
+    return value.map(deserialize) as T;
+  }
+
+  const deserializedObject: { [key: string]: unknown } = {};
+
+  for (const key in value) {
+    if (Object.prototype.hasOwnProperty.call(value, key)) {
+      deserializedObject[key] = deserialize(value[key]);
+    }
+  }
+
+  return deserializedObject as T;
   
-  return;
 }
